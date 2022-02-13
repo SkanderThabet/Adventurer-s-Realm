@@ -1,28 +1,40 @@
-import { Typography, Tag, Button, Table,Space , Card} from "antd";
+import { Typography, Tag, Button, Table, Space, Card, Modal } from "antd";
+import { FireFilled } from "@ant-design/icons";
 import Runes from "../Runes.png";
-import {FireFilled} from "@ant-design/icons";
-import { useMoralis } from "react-moralis";
-import { useEffect , useState } from "react";
-import useCollectors from "hooks/useCollectors";
+import RunesCollected from "../RunesCollected.png";
+import Blockie from "./Blockie";
+import { getEllipsisTxt } from "helpers/formatters";
+import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
 import moment from "moment";
+import Mage from "../2.png";
+import useCollectors from "hooks/useCollectors";
+import { useState, useEffect } from "react";
 
 
 export default function Gamify({ tab }) {
+  const contractProcessor = useWeb3ExecuteFunction();
   const { Moralis, account, isInitialized, isAuthenticated } = useMoralis();
-  const {getUser} = useCollectors();
+  const {getUser, getLeaderBoard} = useCollectors();
   const [userRunes, setUserRunes] = useState();
   const [daysStreak,setDaysStreak] = useState(-1);
   const [collected,setCollected] = useState(true);
+  const [dataSource, setDataSource] = useState([]);
   useEffect(() => {
     if (isInitialized && isAuthenticated) {
       const fetch = async () => {
         const data = await getUser();
+        const leaderboard = await getLeaderBoard();
+        setDataSource(leaderboard)
         const {daysInARow,lastCollected,runes} = data.attributes;
         setUserRunes(runes);
+        setDaysStreak(daysInARow);
+        setCollected(moment(lastCollected).isSame(moment.utc(),"day"));
       }
       fetch();
     }
     else {
+      setDaysStreak(-1);
+      setCollected(true);
       setUserRunes(0);
     }
   }, [isInitialized, isAuthenticated]);
@@ -37,20 +49,108 @@ export default function Gamify({ tab }) {
     if(!lastCollected || !moment(lastCollected).isSame(moment.utc(),"day")){
       data.increment("runes",days[daysInARow]);
       data.set("lastCollected",moment.utc().format());
+      setCollected(true);
       setUserRunes(runes + days[daysInARow]);
       if (daysInARow === 6 ) {
-        data.set("daysInARow",0)
+        data.set("daysInARow",0);
+        setDaysStreak(0);
       }
       else {
-        data.increment("daysInARow")
+        data.increment("daysInARow");
+        setDaysStreak(daysInARow+1);
       }
       data.save();
+      succCollect(days[daysInARow]);
+    } else {
+      failCollect();
     }
+  }
+
+  function succCollect() {
+    let secondsToGo = 5;
+    const modal = Modal.success({
+      title: "Success!",
+      content: (
+        <>
+          <p>You have collected some runes</p>
+          <img src={Runes} alt="" style={{ width: "280px" }} />
+        </>
+      ),
+    });
+    setTimeout(() => {
+      modal.destroy();
+    }, secondsToGo * 1000);
+  }
+
+  function failCollect() {
+    let secondsToGo = 5;
+    const modal = Modal.error({
+      title: "Hold Up!",
+      content: `You can only collect runes once a day, please come back tomorrow`,
+    });
+    setTimeout(() => {
+      modal.destroy();
+    }, secondsToGo * 1000);
+  }
+
+  function getRuneBtn (i) {
+    if ( i === daysStreak && !collected) {
+      return "runeBtn2";
+
+    }else {
+      return "runeBtn"
+    }
+  }
+
+  async function mintNFT() {
+    if (userRunes < 2000) {
+      let secondsToGo = 5;
+      const modal = Modal.error({
+        title: "Hold Up!",
+        content: `Make sure you collect enough runes before collecting this reward`,
+      });
+      setTimeout(() => {
+        modal.destroy();
+      }, secondsToGo * 1000);
+      return;
+    }
+
+    let options = {
+      contractAddress: "0xf8e81D47203A594245E36C48e151709F0C19fBe8",
+      functionName: "createToken",
+      abi: [
+        {
+          inputs: [],
+          name: "createToken",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+      ],
+    };
+    await contractProcessor.fetch({
+      params: options,
+      onSuccess: () => {
+        let secondsToGo = 10;
+        const modal = Modal.success({
+          title: "Success!",
+          content: `Check your wallet for your new magical NFT`,
+        });
+        setTimeout(() => {
+          modal.destroy();
+        }, secondsToGo * 1000);
+      },
+    });
   }
 
   const { Title } = Typography;
   const days = [10, 10, 10, 20, 20, 30, 50];
-  const dataSource = [];
   const columns = [
     {
       title: "Rank",
@@ -59,9 +159,17 @@ export default function Gamify({ tab }) {
     },
     {
       title: "Player",
-      dataIndex: "ethAddress",
       key: "ethAddress",
-      
+      render: (text, record) => (
+        <Space size="middle">
+          <Blockie
+            style={{ border: "solid 2px white" }}
+            address={record.ethAddress}
+            scale={4}
+          />
+          <span>{getEllipsisTxt(record.ethAddress, 6)}</span>
+        </Space>
+      ),
     },
     {
       title: "Runes Accumulated",
@@ -173,7 +281,7 @@ export default function Gamify({ tab }) {
             </p>
           </div>
           <Button
-            style={styles.collect}
+            style={collected ? styles.cantCollect : styles.collect}
             onClick={ () =>
               addRunes()
             }
@@ -184,9 +292,15 @@ export default function Gamify({ tab }) {
         <div style={styles.claimrow}>
             {days.map((e, i) => (
               <>
-                <div className={"runeBtn"}>
+                <div className={getRuneBtn(i)}>
                   <p style={{ fontSize: "12px" }}>{`Day ${i + 1}`}</p>
-                  <img src={Runes} alt="" style={{ width: "40%", margin: "6px auto" }} />
+                  {i > daysStreak -1 ? (
+                    <img src={Runes} alt="" style={{ width: "40%", margin: "6px auto" }} />
+                  ) : (
+                    <img src={RunesCollected} alt="" style={{ width: "60%", margin: "auto" }} />
+                  )
+                }
+                  
                   <p style={{ color: "white", fontSize: "18px" }}>{`+${e}`}</p>
                 </div>
               </>
@@ -242,21 +356,21 @@ export default function Gamify({ tab }) {
         </Tag>
         <div style={styles.rew}>
           <Card
-           
+           onClick={() =>mintNFT()}
             hoverable
             style={styles.rewardCard}
             cover={
               <div style={styles.rewardImg}>
-                <img src="" alt=""></img>
+                <img src={Mage} alt=""></img>
               </div>
             }
           >
             <Title level={5} style={{ color: "white" }}>
-              Rune Collector - Heroes bundle NFT
+              Rune Collector - Mage Hero NFT
             </Title>
             <p style={{ color: "gray" }}>
               Collect enough runes to earn the title of Rune Collector and join
-              a community of Heroes NFT holders.
+              a community of Mages NFT holders.
             </p>
             <div style={styles.bottom}>
               <Space size={"small"}>
@@ -300,6 +414,5 @@ export default function Gamify({ tab }) {
     );
 
   }
-
+  
 }
-

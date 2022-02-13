@@ -32,7 +32,19 @@ const useCollectors = () => {
     }
     
   };
-  return { getUser };
+
+  const getLeaderBoard = async () => {
+    const users = Moralis.Object.extend("RuneCollectors");
+    const query = new Moralis.Query(users);
+    query.descending("runes");
+    let data = await query.find();
+    data = JSON.parse(JSON.stringify(data));
+    data.forEach((e,i) => {
+        e.rank= i + 1;
+    });
+    return data; 
+  }
+  return { getUser,getLeaderBoard };
 };
 
 export default useCollectors;
