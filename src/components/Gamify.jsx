@@ -2,17 +2,20 @@ import { Typography, Tag, Button, Table,Space , Card} from "antd";
 import Runes from "../Runes.png";
 import {FireFilled} from "@ant-design/icons";
 import { useMoralis } from "react-moralis";
-import { useEffect } from "react";
+import { useEffect , useState } from "react";
 import useCollectors from "hooks/useCollectors";
 
 
 export default function Gamify({ tab }) {
   const { Moralis, account, isInitialized, isAuthenticated } = useMoralis();
   const {getUser} = useCollectors();
+  const [userRunes, setUserRunes] = useState();
   useEffect(() => {
     if (isInitialized && isAuthenticated) {
       const fetch = async () => {
-        await getUser();
+        const data = await getUser();
+        const {daysInARow,lastCollected,runes} = data.attributes;
+        setUserRunes(runes);
       }
       fetch();
     }
@@ -122,7 +125,7 @@ export default function Gamify({ tab }) {
         <div style={styles.collected}>
           <div style={styles.colHeading}>
             <span>My Runes</span>
-            <p style={styles.count}>120</p>
+            <p style={styles.count}>{userRunes}</p>
           </div>
           <div>
             <img src={Runes} alt="" />
@@ -195,7 +198,7 @@ export default function Gamify({ tab }) {
           <Space size={"small"}>
             <span style={{ color: "gray" }}> Your Runes:</span>
             <Tag color={"#324252"} style={{ height: "22px" }}>
-              <FireFilled /> 120
+              <FireFilled /> {userRunes}
             </Tag>
           </Space>
         </div>
