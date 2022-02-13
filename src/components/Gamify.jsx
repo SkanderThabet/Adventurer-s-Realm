@@ -1,6 +1,7 @@
-import { Typography, Tag, Button, Table,Space } from "antd";
+import { Typography, Tag, Button, Table,Space , Card} from "antd";
 import Runes from "../Runes.png";
 import {FireFilled} from "@ant-design/icons";
+
 export default function Gamify({ tab }) {
 
   const { Title } = Typography;
@@ -185,7 +186,71 @@ export default function Gamify({ tab }) {
             </Tag>
           </Space>
         </div>
+        <p style={{ color: "gray", marginBottom: "35px" }}>
+          Dillignetly collecting runes will allow you to claim amazing rewards
+          like NFTs and merch. Browse to see what you can afford.
+        </p>
+
+        <Tag color="rgba(47,79,79, 0.2)" style={{ color: "#21bf96" }}>
+          Claim Rewards
+        </Tag>
+        <div style={styles.rew}>
+          <Card
+           
+            hoverable
+            style={styles.rewardCard}
+            cover={
+              <div style={styles.rewardImg}>
+                <img src="" alt=""></img>
+              </div>
+            }
+          >
+            <Title level={5} style={{ color: "white" }}>
+              Rune Collector - Heroes bundle NFT
+            </Title>
+            <p style={{ color: "gray" }}>
+              Collect enough runes to earn the title of Rune Collector and join
+              a community of Heroes NFT holders.
+            </p>
+            <div style={styles.bottom}>
+              <Space size={"small"}>
+                <span style={{ color: "gray" }}> Price:</span>
+                <Tag color={"#324252"} style={{ height: "22px" }}>
+                  <FireFilled /> 2000
+                </Tag>
+              </Space>
+              <span style={{ color: "gray" }}> Supply: 670/1000</span>
+            </div>
+          </Card>
+          <Card
+            hoverable
+            style={styles.rewardCard}
+            cover={
+              <div style={styles.rewardImg}>
+                <img src="" alt=""></img>
+              </div>
+            }
+          >
+            <Title level={5} style={{ color: "white" }}>
+              Infernum Merch - Hoodie
+            </Title>
+            <p style={{ color: "gray" }}>
+              Upgrade your wardrobe, by coverting your runes into some fresh
+              Infernum swag!
+            </p>
+            <div style={styles.bottom}>
+              <Space size={"small"}>
+                <span style={{ color: "gray" }}> Price:</span>
+                <Tag color={"#324252"} style={{ height: "22px" }}>
+                  <FireFilled /> 10000
+                </Tag>
+              </Space>
+              <span style={{ color: "gray" }}> Supply: Infinite</span>
+            </div>
+          </Card>
         </div>
+      </div>
+        
     );
 
   }
