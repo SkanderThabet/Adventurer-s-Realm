@@ -4,12 +4,15 @@ import {FireFilled} from "@ant-design/icons";
 import { useMoralis } from "react-moralis";
 import { useEffect , useState } from "react";
 import useCollectors from "hooks/useCollectors";
+import moment from "moment";
 
 
 export default function Gamify({ tab }) {
   const { Moralis, account, isInitialized, isAuthenticated } = useMoralis();
   const {getUser} = useCollectors();
   const [userRunes, setUserRunes] = useState();
+  const [daysStreak,setDaysStreak] = useState(-1);
+  const [collected,setCollected] = useState(true);
   useEffect(() => {
     if (isInitialized && isAuthenticated) {
       const fetch = async () => {
@@ -19,7 +22,32 @@ export default function Gamify({ tab }) {
       }
       fetch();
     }
+    else {
+      setUserRunes(0);
+    }
   }, [isInitialized, isAuthenticated]);
+
+  async function addRunes() {
+    const users = Moralis.Object.extend("RuneCollectors");
+    const query = new Moralis.Query(users);
+    query.equalTo("ethAddress", account);
+    const data = await query.first();
+    const {daysInARow,lastCollected,runes} = data.attributes;
+
+    if(!lastCollected || !moment(lastCollected).isSame(moment.utc(),"day")){
+      data.increment("runes",days[daysInARow]);
+      data.set("lastCollected",moment.utc().format());
+      setUserRunes(runes + days[daysInARow]);
+      if (daysInARow === 6 ) {
+        data.set("daysInARow",0)
+      }
+      else {
+        data.increment("daysInARow")
+      }
+      data.save();
+    }
+  }
+
   const { Title } = Typography;
   const days = [10, 10, 10, 20, 20, 30, 50];
   const dataSource = [];
@@ -146,7 +174,9 @@ export default function Gamify({ tab }) {
           </div>
           <Button
             style={styles.collect}
-
+            onClick={ () =>
+              addRunes()
+            }
           >
             Collect Runes
           </Button>
