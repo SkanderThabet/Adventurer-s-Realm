@@ -109,7 +109,7 @@ const App = ({ isServerInfo }) => {
             <Route path="/wallet">
               <Wallet />
             </Route>
-            <Route path="/1inch">
+            {/* <Route path="/1inch">
               <Tabs defaultActiveKey="1" style={{ alignItems: "center" }}>
                 <Tabs.TabPane tab={<span>Ethereum</span>} key="1">
                   <DEX chain="eth" />
@@ -121,22 +121,22 @@ const App = ({ isServerInfo }) => {
                   <DEX chain="polygon" />
                 </Tabs.TabPane>
               </Tabs>
-            </Route>
+            </Route> */}
             <Route path="/erc20balance">
               <ERC20Balance />
             </Route>
-            <Route path="/onramp">
+            {/* <Route path="/onramp">
               <Ramper />
-            </Route>
+            </Route> */}
             <Route path="/erc20transfers">
               <ERC20Transfers />
             </Route>
             <Route path="/nftBalance">
               <NFTBalance />
             </Route>
-            <Route path="/contract">
+            {/* <Route path="/contract">
               <Contract />
-            </Route>
+            </Route> */}
             <Route path="/">
               <Redirect to="/gamify" />
             </Route>
