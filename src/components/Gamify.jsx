@@ -1,11 +1,30 @@
-import { Typography , Tag , Button } from "antd";
+import { Typography, Tag, Button, Table } from "antd";
 import Runes from "../Runes.png";
 
-export default function Gamify({tab}) {
+export default function Gamify({ tab }) {
 
-  const {Title} = Typography;
-  const days = [10,10,10,20,20,30,50];
-  
+  const { Title } = Typography;
+  const days = [10, 10, 10, 20, 20, 30, 50];
+  const dataSource = [];
+  const columns = [
+    {
+      title: "Rank",
+      dataIndex: "rank",
+      key: "rank",
+    },
+    {
+      title: "Player",
+      dataIndex: "ethAddress",
+      key: "ethAddress",
+      
+    },
+    {
+      title: "Runes Accumulated",
+      dataIndex: "runes",
+      key: "runes",
+      align: "right",
+    },
+  ];
   const styles = {
     collected: {
       marginTop: "20px",
@@ -75,11 +94,11 @@ export default function Gamify({tab}) {
       justifyContent: "space-between",
     },
   };
-    
-  if(tab === "runes"){
+
+  if (tab === "runes") {
     return (
       <div style={{ paddingLeft: "5vw", width: "70vw" }}>
-      <Title level={2} style={{ color: "white" }}>
+        <Title level={2} style={{ color: "white" }}>
           My Infernum Runes
         </Title>
         <p style={{ color: "gray" }}>
@@ -110,32 +129,55 @@ export default function Gamify({tab}) {
           </div>
           <Button
             style={styles.collect}
-            
+
           >
             Collect Runes
           </Button>
         </div>
+        <div style={styles.claimrow}>
+            {days.map((e, i) => (
+              <>
+                <div className={"runeBtn"}>
+                  <p style={{ fontSize: "12px" }}>{`Day ${i + 1}`}</p>
+                  <img src={Runes} alt="" style={{ width: "40%", margin: "6px auto" }} />
+                  <p style={{ color: "white", fontSize: "18px" }}>{`+${e}`}</p>
+                </div>
+              </>
+            ))}
+          </div>
+          <span style={{ color: "gray" }}>
+            Learn more abour Moralis?{" "}
+            <a href="https://www.moralis.io">Our website</a>
+          </span>
       </div>
-      
-
     );
 
   }
-  if(tab === "leaderboard"){
+  if (tab === "leaderboard") {
     return (
       <div>
-      leaderboard
+        <Title level={2} style={{ color: "white" }}>
+          Infernum Rune Collectors Leaderboard
+        </Title>
+        <Table
+            style={{ marginTop: "35px" }}
+            dataSource={dataSource}
+            columns={columns}
+          />
+        <p style={{ color: "gray" }}>
+          Ranking of players with the highest amount of runes
+        </p>
       </div>
     );
-    
+
   }
-  if(tab === "rewards"){
+  if (tab === "rewards") {
     return (
       <div>
-      rewards
+        rewards
       </div>
     );
-    
+
   }
 
 }
