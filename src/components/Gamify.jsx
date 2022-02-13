@@ -1,6 +1,6 @@
-import { Typography, Tag, Button, Table } from "antd";
+import { Typography, Tag, Button, Table,Space } from "antd";
 import Runes from "../Runes.png";
-
+import {FireFilled} from "@ant-design/icons";
 export default function Gamify({ tab }) {
 
   const { Title } = Typography;
@@ -173,9 +173,19 @@ export default function Gamify({ tab }) {
   }
   if (tab === "rewards") {
     return (
-      <div>
-        rewards
-      </div>
+      <div style={{ paddingLeft: "5vw", width: "70vw" }}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <Title level={2} style={{ color: "white" }}>
+            Claim Your Rewards
+          </Title>
+          <Space size={"small"}>
+            <span style={{ color: "gray" }}> Your Runes:</span>
+            <Tag color={"#324252"} style={{ height: "22px" }}>
+              <FireFilled /> 120
+            </Tag>
+          </Space>
+        </div>
+        </div>
     );
 
   }
