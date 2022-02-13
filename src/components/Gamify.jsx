@@ -1,9 +1,22 @@
 import { Typography, Tag, Button, Table,Space , Card} from "antd";
 import Runes from "../Runes.png";
 import {FireFilled} from "@ant-design/icons";
+import { useMoralis } from "react-moralis";
+import { useEffect } from "react";
+import useCollectors from "hooks/useCollectors";
+
 
 export default function Gamify({ tab }) {
-
+  const { Moralis, account, isInitialized, isAuthenticated } = useMoralis();
+  const {getUser} = useCollectors();
+  useEffect(() => {
+    if (isInitialized && isAuthenticated) {
+      const fetch = async () => {
+        await getUser();
+      }
+      fetch();
+    }
+  }, [isInitialized, isAuthenticated]);
   const { Title } = Typography;
   const days = [10, 10, 10, 20, 20, 30, 50];
   const dataSource = [];
