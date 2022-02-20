@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import { useMoralis } from "react-moralis";
 import {
   BrowserRouter as Router,
@@ -65,6 +65,9 @@ const App = ({ isServerInfo }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isWeb3Enabled]);
 
+  const [inputValue, setInputValue] = useState("explore");
+
+
   return (
     <Layout
       style={{
@@ -108,6 +111,9 @@ const App = ({ isServerInfo }) => {
             </Route>
             <Route path="/wallet">
               <Wallet />
+            </Route>
+            <Route path="/NFTMarketPlace">
+              
             </Route>
             {/* <Route path="/1inch">
               <Tabs defaultActiveKey="1" style={{ alignItems: "center" }}>

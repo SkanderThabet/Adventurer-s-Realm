@@ -307,8 +307,8 @@ export default function Gamify({ tab }) {
             ))}
           </div>
           <span style={{ color: "gray" }}>
-            Learn more abour Moralis?{" "}
-            <a href="https://www.moralis.io">Our website</a>
+            Learn more about Us?{" "}
+            <a href="">Our website</a>
           </span>
       </div>
     );
