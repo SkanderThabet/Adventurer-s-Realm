@@ -1,13 +1,11 @@
 import { useLocation } from "react-router";
-import { useEffect,useState } from "react";
 import { Menu } from "antd";
 import { NavLink } from "react-router-dom";
-import SearchCollections from "components/SearchCollections";
+
 function MenuItems() {
   const { pathname } = useLocation();
-  const [inputValue, setInputValue] = useState("explore");
+
   return (
-    
     <Menu
       theme="light"
       mode="horizontal"
@@ -20,7 +18,6 @@ function MenuItems() {
       }}
       defaultSelectedKeys={[pathname]}
     >
-      <SearchCollections setInputValue={setInputValue}/>
       <Menu.Item key="/gamify">
         <NavLink to="/gamify">🚀 Gamify</NavLink>
       </Menu.Item>
@@ -38,9 +35,6 @@ function MenuItems() {
       </Menu.Item>
       <Menu.Item key="/erc20transfers">
         <NavLink to="/erc20transfers">💸 Transfers</NavLink>
-      </Menu.Item>
-      <Menu.Item key="nftMarket" onClick={() => setInputValue("explore")} >
-              <NavLink to="/NFTMarketPlace">🛒 Explore Market</NavLink>
       </Menu.Item>
       <Menu.Item key="/nftBalance">
         <NavLink to="/nftBalance">🖼 NFTs</NavLink>
