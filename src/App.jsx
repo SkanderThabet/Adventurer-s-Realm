@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import {
   BrowserRouter as Router,
@@ -10,6 +10,7 @@ import Account from "components/Account/Account";
 import Chains from "components/Chains";
 import TokenPrice from "components/TokenPrice";
 import NFTBalance from "components/NFTBalance";
+import NFTTokenIds from "components/NFTTokenIds";
 import { Layout } from "antd";
 import "antd/dist/antd.css";
 import NativeBalance from "components/NativeBalance";
@@ -54,6 +55,8 @@ const App = () => {
   const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } =
     useMoralis();
 
+  const [inputValue, setInputValue] = useState("explore");
+
   useEffect(() => {
     const connectorId = window.localStorage.getItem("connectorId");
     if (isAuthenticated && !isWeb3Enabled && !isWeb3EnableLoading)
@@ -86,7 +89,10 @@ const App = () => {
               <NFTBalance />
             </Route>
             <Route path="/NFTMarketPlace">
-              <NFTBalance />
+              <NFTTokenIds
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+              />
             </Route>
             <Route path="/Transactions">
               <NFTBalance />

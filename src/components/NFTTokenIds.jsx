@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { useMoralis, useNFTBalances } from "react-moralis";
+import { useMoralis } from "react-moralis";
 import { Card, Image, Tooltip, Modal, Input, Skeleton } from "antd";
+import { useNFTTokenIds } from "hooks/useNFTTokenIds";
 import {
   FileSearchOutlined,
   SendOutlined,
@@ -25,8 +26,8 @@ const styles = {
   },
 };
 
-function NFTBalance() {
-  const { data: NFTBalances } = useNFTBalances();
+function NFTBalance({ inputValue }) {
+  const { data: NFTBalances } = useNFTTokenIds(inputValue);
   const { Moralis, chainId } = useMoralis();
   const [visible, setVisibility] = useState(false);
   const [receiverToSend, setReceiver] = useState(null);
