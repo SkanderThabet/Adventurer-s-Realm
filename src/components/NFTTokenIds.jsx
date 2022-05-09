@@ -86,6 +86,18 @@ function NFTTokenIds({ inputValue, setInputValue }) {
   );
   const purchaseItemFunction = "createMarketSale";
   const NFTCollections = getCollectionsByChain(chainId);
+  const queryMetaData = useMoralisQuery("Metadata");
+  const fetchMetaData = JSON.parse(
+    JSON.stringify(queryMetaData.data, ["attributes"].Object)
+  );
+  const result = () => {
+    for (let index = 0; index < fetchMetaData.length; index++) {
+      const element = fetchMetaData[1];
+      console.log(JSON.stringify(element.attributes));
+    }
+  };
+  result();
+  // console.log(JSON.stringify(fetchMetaData));
 
   async function purchase() {
     setLoading(true);
@@ -249,14 +261,14 @@ function NFTTokenIds({ inputValue, setInputValue }) {
                     />
                   </Tooltip>,
                 ]}
-                style={{ width: 240, border: "2px solid #e7eaf3" }}
+                style={{ width: 300, border: "2px solid #e7eaf3" }}
                 cover={
                   <Image
                     preview={false}
                     src={nft?.image || "error"}
                     fallback={fallbackImg}
                     alt=""
-                    style={{ height: "240px" }}
+                    style={{ height: "400px" }}
                   />
                 }
                 key={index}
@@ -284,14 +296,14 @@ function NFTTokenIds({ inputValue, setInputValue }) {
                     <ShoppingCartOutlined onClick={() => handleBuyClick(nft)} />
                   </Tooltip>,
                 ]}
-                style={{ width: 240, border: "2px solid #e7eaf3" }}
+                style={{ width: 300, border: "2px solid #e7eaf3" }}
                 cover={
                   <Image
                     preview={false}
                     src={nft.image || "error"}
                     fallback={fallbackImg}
                     alt=""
-                    style={{ height: "240px" }}
+                    style={{ height: "400px" }}
                   />
                 }
                 key={index}
@@ -299,10 +311,12 @@ function NFTTokenIds({ inputValue, setInputValue }) {
                 {getMarketItem(nft) && (
                   <Badge.Ribbon text="Buy Now" color="green"></Badge.Ribbon>
                 )}
+
                 <Meta title={nft.name} description={`#${nft.token_id}`} />
               </Card>
             ))}
         </div>
+
         {getMarketItem(nftToBuy) ? (
           <Modal
             title={`Buy ${nftToBuy?.name} #${nftToBuy?.token_id}`}
